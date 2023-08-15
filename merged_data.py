@@ -1,17 +1,14 @@
 import pandas as pd
 
-steam_store_games = "cse-163-project-data/steam.csv"
 twitch = 'cse-163-project-data/Twitch_game_data.csv'
 player_data = 'cse-163-project-data/Valve_Player_Data.csv'
 
-game_data = pd.read_csv(steam_store_games)
 twitch_data = pd.read_csv(twitch)
 player = pd.read_csv(player_data)
 
 
-def merged_data(game_data: pd.DataFrame, twitch_data: pd.DataFrame,
+def merged_data(twitch_data: pd.DataFrame,
                 player=pd.DataFrame) -> pd.DataFrame:
-    game_data['name'] = game_data['name'].str.rstrip('®')
     player['Game_Name'] = player['Game_Name'].str.replace(
            'Counter Strike: Global Offensive',
            'Counter-Strike: Global Offensive')
@@ -23,10 +20,6 @@ def merged_data(game_data: pd.DataFrame, twitch_data: pd.DataFrame,
                             "PLAYERUNKNOWN'S BATTLEGROUNDS", 'Rust',
                             'Stardew Valley', 'Rocket League',
                             'Cyberpunk 2077', 'Apex Legends']
-
-    game_columns = game_data[['name', 'developer', 'publisher']]
-    games_filtered = game_columns[game_columns['name'].isin(
-        game_names_to_filter)]
 
     years = twitch_data[(twitch_data['Year'] >= 2017) &
                         (twitch_data['Year'] <= 2021)]
@@ -54,14 +47,12 @@ def merged_data(game_data: pd.DataFrame, twitch_data: pd.DataFrame,
                                                   'Avg_players',
                                                   'Peak_Players']]
 
-    merged_games = games_filtered.merge(player_data_filtered, left_on='name',
-                                        right_on='Game_Name', how='right')
-
     columns_1 = ['Game_Name', 'month', 'year']
     columns_2 = ['Game', 'Month', 'Year']
 
-    merged = merged_games.merge(twitch_data_filtered, left_on=columns_1,
-                                right_on=columns_2, how='outer')
-    merged.drop(columns=['name', 'Game_Name', 'month', 'year'], inplace=True)
+    merged = player_data_filtered.merge(twitch_data_filtered,
+                                        left_on=columns_1, right_on=columns_2,
+                                        how='outer')
+    merged.drop(columns=['Game_Name', 'month', 'year'], inplace=True)
 
     return merged

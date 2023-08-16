@@ -1,7 +1,8 @@
 import pandas as pd
 
 from cse163_utils import assert_equals
-from data_processing import cleanse_twitch_data, cleanse_player_data, merge_data
+from data_processing import cleanse_twitch_data, cleanse_player_data,\
+                            merge_data
 
 
 def test_cleanse_twitch_data(df: pd.DataFrame) -> None:
